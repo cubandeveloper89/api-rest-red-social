@@ -22,50 +22,6 @@ const pruebaUser = (req, res) => {
 };
 
 // Registro de usuarios
-const register_by_victor = (req, res) => {              // *** este es el metodo usando callback en la funcion exec ***
-    // Recoger datos de la peticion
-    let params = req.body;
-
-
-    // Comprobar que me llegan bien + validacion
-    if(!params.name || !params.email || !params.password || !params.nick){
-        console.log("Validacion minima pasada");
-        return res.status(400).json({
-            status: "error",
-            message: "Faltan datos por enviar"
-        });
-    } 
-    // Crear objeto de usuario
-    let user_to_save = new User(params);
-
-    // Control de usuarios duplicados
-    User.find({ $or: [
-        {email: user_to_save.email.toLowerCase()},
-        {nick: user_to_save.nick.toLowerCase()}
-    ]}).exec((error, users) => {
-        if (error) return res.status(500).json({status: "error", message: "Error al guardar duplicados"});      
-        
-        if (users && users.length >= 1){
-            return res.status(200).send({
-                status: "succes",
-                message: "El usuario ya existe",
-            });
-        } else {
-            // Cifrar contraseña
-        
-            // Guardar usuario en la bbdd
-        
-            // Devolver resultado
-            return res.status(200).json({
-                status: "succes",
-                message: "Accion de registro de usuarios",
-                user_to_save
-            });
-
-        }
-    })
-};
-
 const register = async (req, res) => {
  
     let params = req.body;
@@ -85,7 +41,7 @@ const register = async (req, res) => {
         
     } catch (error) {
         return res.status(400).json({
-            status: "error",
+            status: "valiError",
             messaje: "No ha superado la validacion"
         });
     }
@@ -101,7 +57,7 @@ const register = async (req, res) => {
     
         if (users && users.length >= 1) {
             return res.status(200).send({
-                status: "error",
+                status: "duplicate",
                 message: "El usuario ya existe"
             });
         }
@@ -109,6 +65,8 @@ const register = async (req, res) => {
         // Cifrar contraseña
         let pwd = await bcrypt.hash(params.password, 10);
         params.password = pwd;
+        console.log(params);
+
     
         // Crear objeto usuario
         let user_to_save = new User(params);
@@ -132,7 +90,8 @@ const register = async (req, res) => {
     } catch (error) {
         return res.status(500).json({
             status: "error",
-            message: "Error en la petición"
+            message: "Error en la petición",
+            error
         });
     }
 }

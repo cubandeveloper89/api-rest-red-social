@@ -6,8 +6,8 @@ const validate = (params) => {
                 validator.isAlpha(params.name, "es-ES");
 
     let surname = !validator.isEmpty(params.surname) && 
-                    validator.isLength(params.surname, {min: 3, max: undefined}) &&
-                    validator.isAlpha(params.surname, "es-ES");
+                    validator.isLength(params.surname, {min: 3, max: undefined}) 
+                    // validator.isAlpha(params.surname, "es-ES");          //se lo tuve que quitar porque no acepta los espacios
 
     let nick = !validator.isEmpty(params.nick) && 
                 validator.isLength(params.nick, {min: 2, max: undefined});
